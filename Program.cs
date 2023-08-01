@@ -1,2 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine(Console.ReadLine());
+﻿using TestApp.Delegates;
+
+class Program
+{
+    static void Main()
+    {
+        new Delegates(Console.ReadLine(), Console.ReadLine(), 10, 5, Delegates.Operations.Mult);
+        Console.ReadLine();
+
+    }
+}
