@@ -1,14 +1,32 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using TestApp.EFTests;
 
 public class ApplicationContext : DbContext
 {
-    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<User> Users => Set<User>();
+
+    public ApplicationContext() => Database.EnsureCreated();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        string connectionString = @"Server=127.0.0.1,2022;Database=TestDatabase;User=sa;Password=v2v3v5v8v9vfF;Encrypt=False";
+        optionsBuilder.UseSqlServer(getConfig("DefaultConnection")) ;
+    }
 
-        optionsBuilder.UseSqlServer(connectionString);
+    protected string getConfig(string ConnectionType)
+    {
+        var builder = new ConfigurationBuilder();
+        // установка пути к текущему каталогу
+        string appsettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+
+        //Console.WriteLine(appsettingsPath);
+        //Console.ReadLine();
+        // получаем конфигурацию из файла appsettings.json
+        builder.AddJsonFile(appsettingsPath);
+        // создаем конфигурацию
+        var config = builder.Build();
+        // получаем строку подключения
+        return config.GetConnectionString(ConnectionType);
     }
 }
